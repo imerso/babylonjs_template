@@ -5,7 +5,8 @@ This little Babylon.js Typescript Template requires npm.
 - Typescript based;
 - Toggle to use custom loading screen;
 - Has some performance toggles;
-- Compatible with XR.
+- Compatible with XR;
+- Will minify and obfuscate production build.
 
 ## INSTALL
 
