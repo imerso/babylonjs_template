@@ -10,8 +10,8 @@ This little Babylon.js Typescript Template requires npm.
 
 ## INSTALL
 
-git clone https://github.com/imerso/babylonjs_template.git
-cd babylonjs_template
+git clone https://github.com/imerso/babylonjs_template.git  
+cd babylonjs_template  
 npm install
 
 ## BUILD DEV AND WATCH FOR CHANGES
@@ -20,10 +20,10 @@ npm run start
 
 ## BUILD DIST DIRECTORY
 
-npm run dev
+npm run dev  
 (dev build without auto-start)
 
 or
 
-npm run prod
+npm run prod  
 (production build which will also obfuscate the build)
