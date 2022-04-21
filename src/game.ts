@@ -206,7 +206,7 @@ export class Game {
                 main._light1.specular = BABYLON.Color3.White();
 
                 // create shadows generator
-                main._light2 = new BABYLON.DirectionalLight("dir01", new BABYLON.Vector3(0, -0.95, -0.75), main._scene);
+                main._light2 = new BABYLON.DirectionalLight("light2", new BABYLON.Vector3(0, -0.95, -0.75), main._scene);
                 if (USE_SHADOWS) {
                     main._shadowgen = new BABYLON.ShadowGenerator(1024, main._light2);
                     main._shadowgen.useBlurExponentialShadowMap = true;
