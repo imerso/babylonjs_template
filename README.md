@@ -7,15 +7,15 @@ This little Babylon.js Typescript Template requires npm.
 - Has some performance toggles;
 - Compatible with XR.
 
-##INSTALL##
+## INSTALL
 
 npm install
 
-##BUILD DEV AND WATCH FOR CHANGES##
+## BUILD DEV AND WATCH FOR CHANGES
 
 npm run start
 
-##BUILD DIST DIRECTORY##
+## BUILD DIST DIRECTORY
 
 npm run dev
 (dev build without auto-start)
