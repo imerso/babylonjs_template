@@ -370,7 +370,6 @@ export class Game {
             //this._suzanne.position.set(px, py, pz);
 
             // update fractal
-            this._fractal.rotation.y -= 0.0001;
             this._fractal.update(this._light2.direction, this._scene.activeCamera.position);
         });
 
