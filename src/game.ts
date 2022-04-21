@@ -363,13 +363,6 @@ export class Game {
                     }
             }
 
-            // update suzanne
-            //let time = performance.now();
-            //let px = .25 * Math.cos(time * 0.0010);
-            //let py = 3.15 + .25 * Math.sin(time * 0.0007);
-            //let pz = 1.2;
-            //this._suzanne.position.set(px, py, pz);
-
             // update fractal
             this._fractal.update(this._light2.direction, this._scene.activeCamera.position);
         });

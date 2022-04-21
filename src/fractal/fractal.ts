@@ -20,7 +20,7 @@
 
 import * as BABYLON from 'babylonjs';
 
-export class Fractal extends BABYLON.Mesh {
+export class Fractal extends BABYLON.TransformNode {
     private _shader: BABYLON.ShaderMaterial;
 
     constructor(name: string, bbox: BABYLON.Vector3, scene: BABYLON.Scene) {
@@ -35,8 +35,9 @@ export class Fractal extends BABYLON.Mesh {
         this._shader.setVector3("bbox", bbox);
         this._shader.sideOrientation = BABYLON.Mesh.FRONTSIDE;
 
-        this._masterMesh = BABYLON.CreateBox(name, {width:bbox.x, height:bbox.y, depth:bbox.z});
-        this._masterMesh.material = this._shader;
+        let box = BABYLON.CreateBox(name, {width:bbox.x, height:bbox.y, depth:bbox.z});
+        box.material = this._shader;
+        box.parent = this;
     }
 
     update(lightDir: BABYLON.Vector3, eyePos: BABYLON.Vector3): void {
