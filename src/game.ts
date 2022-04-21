@@ -26,13 +26,14 @@ import { Fractal } from './fractal/fractal';
 // them enabled and render at a lower resolution
 // to compensate.
 //
+const USE_DEBUG_LAYER: boolean = true;              // enable debug inspector?
+const USE_CUSTOM_LOADINGSCREEN: boolean = false;    // enable custom loading screen?
 const HW_SCALE_NORMAL: float = 1;                  // scale in non-vr mode
 const HW_SCALE_VR: float = 1;                      // scale in vr mode
 const USE_ANTIALIAS: boolean = false;               // enable antialias?
 const USE_HDR: boolean = false;                     // enable hdr?
 const USE_GLOW: boolean = true;                    // enable glow?
 const USE_SHADOWS: boolean = false;                 // enable shadows?
-const USE_CUSTOM_LOADINGSCREEN: boolean = false;    // enable custom loading screen?
 // ======================================
 
 
@@ -272,7 +273,7 @@ export class Game {
                     main._grounds.push(env.ground);
 
                     // ready to play
-                    //main._scene.debugLayer.show();
+                    if (USE_DEBUG_LAYER) main._scene.debugLayer.show();
                     console.log("All resources loaded!");
 
                     // enable user click to close loading screen
