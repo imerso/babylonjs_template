@@ -32,12 +32,40 @@ const USE_ANTIALIAS: boolean = false;               // enable antialias?
 const USE_HDR: boolean = false;                     // enable hdr?
 const USE_GLOW: boolean = true;                    // enable glow?
 const USE_SHADOWS: boolean = false;                 // enable shadows?
+const USE_CUSTOM_LOADINGSCREEN: boolean = false;    // enable custom loading screen?
 // ======================================
+
+
+//=============================================
+// Replace the default Babylonjs loading screen
+// with our own loading screen.
+
+// We can only show or hide the loading ui
+interface ILoadingScreen {
+    displayLoadingUI: () => void;
+    hideLoadingUI: () => void;
+    loadingUIBackgroundColor: string;
+}
+
+// Just show or hide the div with "Loading..." message
+class CustomLoadingScreen implements ILoadingScreen {
+    public loadingUIBackgroundColor: string
+    constructor(public loadingUIText: string) { }
+    public displayLoadingUI() {
+        document.getElementById("frontdiv").style.visibility = 'visible';
+    }
+
+    public hideLoadingUI() {
+        document.getElementById("frontdiv").style.visibility = 'hidden';
+    }
+}
+//=============================================
 
 
 // Main game class
 export class Game {
 
+    private _loadingScreen: CustomLoadingScreen = null;
     private _fps: HTMLElement;
     private _canvas: HTMLCanvasElement;
     private _engine: BABYLON.Engine;
@@ -97,6 +125,30 @@ export class Game {
     }
 
 
+    // create a default xr experience
+    createDefaultXr() : void {
+        this._scene.createDefaultXRExperienceAsync(
+            {
+                floorMeshes: this._grounds
+            }).then((xrHelper) => {
+                this._xrhelper = xrHelper;
+                this._xrhelper.baseExperience.onStateChangedObservable.add((state) => {
+                    if (state === BABYLON.WebXRState.IN_XR) {
+                        // not working yet, but we hope it will in the near future
+                        this._engine.setHardwareScalingLevel(HW_SCALE_VR);
+
+                        // force xr camera to specific position and rotation
+                        // when we just entered xr mode
+                        this._scene.activeCamera.position.set(0, 0.1, 2);
+                        (this._scene.activeCamera as BABYLON.WebXRCamera).setTarget(new BABYLON.Vector3(0, 0.1, 0));
+                    }
+                });
+            }, (error) => {
+                console.log("ERROR - No XR support.");
+            });
+    }
+
+
     // Creates the main Scene
     // with a basic model and a default environment;
     // it will also prepare for XR where available.
@@ -106,6 +158,12 @@ export class Game {
         return new Promise(
             function (resolve, reject) {
                 // show loading ui
+                // uncomment the next two lines to replace the
+                // default loading ui with the custom ui
+                if (USE_CUSTOM_LOADINGSCREEN) {
+                    main._loadingScreen = new CustomLoadingScreen("");
+                    main._engine.loadingScreen = main._loadingScreen;
+                }
                 main._engine.displayLoadingUI();
 
                 // create main scene
@@ -217,33 +275,27 @@ export class Game {
                     //main._scene.debugLayer.show();
                     console.log("All resources loaded!");
 
-                    // create a default xr experience
-                    // note: we do it here because if we create it before
-                    // the user clicks the start button, then the "switch to vr" button
-                    // will also appear at that point, which is an undesired behaviour.
-                    await main._scene.createDefaultXRExperienceAsync(
+                    // enable user click to close loading screen
+                    document.getElementById("frontdiv2").innerHTML = "<h2>CLICK TO START</h2>"
+                    document.getElementById("frontdiv").style.cursor = "pointer";
+
+                    // when starting the game itself,
+                    // we finally create a default xr experience
+                    if (USE_CUSTOM_LOADINGSCREEN)
                     {
-                        floorMeshes: main._grounds
-                    }).then((xrHelper) => {
-                        main._xrhelper = xrHelper;
-                    }, (error) => {
-                        console.log("ERROR - No XR support.");
-                    });
-
-                    main._xrhelper.baseExperience.onStateChangedObservable.add((state) => {
-                        if (state === BABYLON.WebXRState.IN_XR) {
-                            // not working yet, but we hope it will in the near future
-                            main._engine.setHardwareScalingLevel(HW_SCALE_VR);
-
-                            // force xr camera to specific position and rotation
-                            // when we just entered xr mode
-                            main._scene.activeCamera.position.set(0, 0.1, 2);
-                            (main._scene.activeCamera as BABYLON.WebXRCamera).setTarget(new BABYLON.Vector3(0, 0.1, 0));
-                        }
-                    });
-
-                    resolve(true);
-
+                        // when using a custom loading, we will wait for the user to click,
+                        // so we can also automatically start the background music...
+                        document.getElementById("frontdiv").addEventListener("click", async function () {
+                            main.createDefaultXr();
+                            resolve(true);
+                        });
+                    }
+                    else
+                    {
+                        // just open the default xr env
+                        main.createDefaultXr();
+                        resolve(true);
+                    }
                 });
             });
     }

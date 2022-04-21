@@ -4,7 +4,7 @@
   "description": "Babylon Typescript Template",
   "main": "index.js",
   "scripts": {
-    "start": "webpack --config webpack.dev.js --watch",
+    "start": "webpack serve --open --config webpack.dev.js",
     "dev": "webpack --config webpack.dev.js",
     "prod": "webpack --config webpack.prod.js"
   },
