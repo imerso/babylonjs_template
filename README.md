@@ -9,7 +9,7 @@ This little Babylon.js Typescript Template requires npm.
 - Will minify and obfuscate production build.
 
 <p>
-    <img src="_resources_/screenshot.jpg" width="384" height="504" />
+    <img src="_resources/screenshot.jpg" width="384" height="504" />
 </p>
 
 ## INSTALL
