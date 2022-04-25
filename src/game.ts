@@ -26,14 +26,14 @@ import { Fractal } from './fractal/fractal';
 // them enabled and render at a lower resolution
 // to compensate.
 //
-const USE_DEBUG_LAYER: boolean = true;              // enable debug inspector?
-const USE_CUSTOM_LOADINGSCREEN: boolean = false;    // enable custom loading screen?
-const HW_SCALE_NORMAL: float = 1;                  // scale in non-vr mode
-const HW_SCALE_VR: float = 1;                      // scale in vr mode
-const USE_ANTIALIAS: boolean = false;               // enable antialias?
-const USE_HDR: boolean = false;                     // enable hdr?
-const USE_GLOW: boolean = true;                    // enable glow?
-const USE_SHADOWS: boolean = false;                 // enable shadows?
+let USE_DEBUG_LAYER: boolean = false;              // enable debug inspector?
+let USE_CUSTOM_LOADINGSCREEN: boolean = false;    // enable custom loading screen?
+let HW_SCALE_NORMAL: float = 1;                  // scale in non-vr mode
+let HW_SCALE_VR: float = 1;                      // scale in vr mode
+let USE_ANTIALIAS: boolean = true;               // enable antialias?
+let USE_HDR: boolean = false;                     // enable hdr?
+let USE_GLOW: boolean = true;                    // enable glow?
+let USE_SHADOWS: boolean = true;                 // enable shadows?
 // ======================================
 
 
@@ -85,10 +85,27 @@ export class Game {
 
     // Initialization, gets canvas and creates engine
     constructor(canvasElement: string) {
+        // lower rendering quality on mobile
+        if (this.isMobileDevice()) {
+            USE_HDR = false;
+            USE_ANTIALIAS = false;
+            USE_GLOW = true;
+            USE_SHADOWS = false;
+            HW_SCALE_NORMAL = 2;
+            HW_SCALE_VR = 2;
+        }
+
         this._canvas = <HTMLCanvasElement>document.getElementById(canvasElement);
         this._engine = new BABYLON.Engine(this._canvas, USE_ANTIALIAS);
         this._engine.setHardwareScalingLevel(HW_SCALE_NORMAL);
     }
+
+
+    // Detects if running on mobile device
+    isMobileDevice(): boolean {
+        let mobile = (navigator.userAgent||navigator.vendor).match(/(quest|android|iphone|blackberry|ipod|kindle)/i) != null;
+        return mobile;
+    };
 
 
     // Create a few cameras
@@ -130,13 +147,20 @@ export class Game {
     createDefaultXr() : void {
         this._scene.createDefaultXRExperienceAsync(
             {
-                floorMeshes: this._grounds
+                floorMeshes: this._grounds,
+                outputCanvasOptions: { canvasOptions: { framebufferScaleFactor: 1/HW_SCALE_VR } }
             }).then((xrHelper) => {
                 this._xrhelper = xrHelper;
+                xrHelper.baseExperience.sessionManager.updateTargetFrameRate(30);
+
+                //const layers = this._xrhelper.baseExperience.featuresManager.enableFeature(BABYLON.WebXRFeatureName.LAYERS, "latest", {
+                //    preferMultiviewOnInit: true
+                //}, true, false);
+
                 this._xrhelper.baseExperience.onStateChangedObservable.add((state) => {
                     if (state === BABYLON.WebXRState.IN_XR) {
                         // not working yet, but we hope it will in the near future
-                        this._engine.setHardwareScalingLevel(HW_SCALE_VR);
+                        //this._engine.setHardwareScalingLevel(HW_SCALE_VR);
 
                         // force xr camera to specific position and rotation
                         // when we just entered xr mode
